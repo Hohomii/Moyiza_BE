@@ -3,7 +3,10 @@ name: Moyiza server CI/CD
 on:
   push:
     branches:  
-      - develop 
+      - develop
+  pull_request:
+    branches:
+      - develop
 
 jobs:
   build:
