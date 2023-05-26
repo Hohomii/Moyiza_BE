@@ -143,7 +143,7 @@ public class ClubService {
         return new ClubDetailResponse(club, clubImageUrlList); // querydsl에서 List로 projection이 가능한가 확인해봐야함
     }
 
-    /////////////////////private method///////////////////////
+    ////////////////////private method///////////////////////
 
     //클럽id Null 체크
     private Club loadClubByClubId(Long clubId) {
