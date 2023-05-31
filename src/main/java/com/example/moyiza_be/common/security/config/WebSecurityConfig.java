@@ -2,6 +2,7 @@ package com.example.moyiza_be.common.security.config;
 
 import com.example.moyiza_be.common.security.jwt.JwtAuthFilter;
 import com.example.moyiza_be.common.security.jwt.JwtUtil;
+import com.example.moyiza_be.config.WebSocketConfig;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -28,13 +29,16 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableMethodSecurity(securedEnabled = true)
 public class WebSecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
+    private final WebSocketConfig webSocketConfig;
 
     private static final String[] PERMIT_URL_ARRAY = {
             "/user/login",
             "/user/signup",
             "/user/check/**",
             "/user/test/**",
-            "/enums"
+            "/enums",
+            "/chat/**", //websocket 연결
+            "*"
     };
 
     @Bean
@@ -58,11 +62,12 @@ public class WebSecurityConfig {
                         .csrf().disable()
                         .httpBasic().disable()
                         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                        .authorizeHttpRequests().requestMatchers(PERMIT_URL_ARRAY).permitAll()
-                        .requestMatchers(HttpMethod.GET, "/club/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/event/**").permitAll()
-                        .anyRequest().authenticated().and()
-                        .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                        .authorizeHttpRequests()
+                            .requestMatchers(PERMIT_URL_ARRAY).permitAll()
+                            .requestMatchers(HttpMethod.GET, "/club/**").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/event/**").permitAll()
+                            .anyRequest().authenticated().and()
+                            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
 
         //로그아웃 기능
@@ -79,8 +84,11 @@ public class WebSecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.addAllowedOrigin("http://localhost:3000");
-
         config.addAllowedOrigin("http://moyiza.s3-website.ap-northeast-2.amazonaws.com/");
+        config.addAllowedOrigin("chrome-extension://pfdhoblngboilpfeibdedpjgfnlcodoo/index.html");
+        config.addAllowedOrigin("http://localhost:8080");
+        config.addAllowedOrigin("ws://localhost:8080");
+        config.addAllowedOrigin("http://localhost:8080/index.html");
 
         config.addExposedHeader(JwtUtil.ACCESS_TOKEN);
 
